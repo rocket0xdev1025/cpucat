@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cat Processing Unit ($CPU)</title>
+  <meta name="description" content="Cat Processing Unit ($CPU) — Smol cat. Big processing power. The Solana meme chip." />
+  <link rel="icon" href="logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: "#07111f",
+            cream: "#fff6ea",
+            fur: "#ff8c1a",
+            laser: "#3ad7ff",
+            solder: "#12304d"
+          },
+          fontFamily: {
+            display: ["Chakra Petch", "sans-serif"],
+            sans: ["Outfit", "sans-serif"],
+            mono: ["Share Tech Mono", "ui-monospace", "monospace"]
+          },
+          boxShadow: {
+            laser: "0 0 40px rgba(58, 215, 255, 0.35)",
+            fur: "0 0 40px rgba(255, 140, 26, 0.35)"
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --ca: "TBA";
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Outfit", sans-serif;
+      color: #fff6ea;
+      background: #07111f;
+    }
+
+    ::selection {
+      background: #ff8c1a;
+      color: #1a0e04;
+    }
+
+    .cpu-bg {
+      background-image:
+        radial-gradient(ellipse 90% 55% at 50% 0%, rgba(58, 215, 255, 0.18), transparent 60%),
+        radial-gradient(ellipse 50% 40% at 90% 18%, rgba(255, 140, 26, 0.2), transparent 55%),
+        radial-gradient(ellipse 40% 35% at 8% 30%, rgba(255, 140, 26, 0.12), transparent 50%),
+        linear-gradient(180deg, rgba(7, 17, 31, 0.45) 0%, rgba(7, 17, 31, 0.72) 28%, rgba(7, 17, 31, 0.9) 62%, rgba(5, 10, 20, 0.96) 100%),
+        url("logo.png");
+      background-size: cover;
+      background-position: center 18%;
+      background-attachment: fixed;
+    }
+
+    .circuit {
+      background-image:
+        linear-gradient(rgba(58, 215, 255, 0.09) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(58, 215, 255, 0.09) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse at 50% 20%, #000 10%, transparent 72%);
+    }
+
+    .trace {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cpath d='M10 20 H80 V90 H150' fill='none' stroke='%233ad7ff' stroke-width='1' opacity='0.35'/%3E%3Cpath d='M20 150 H70 V70 H160' fill='none' stroke='%23ff8c1a' stroke-width='1' opacity='0.28'/%3E%3Ccircle cx='80' cy='90' r='2.2' fill='%233ad7ff'/%3E%3Ccircle cx='70' cy='70' r='2.2' fill='%23ff8c1a'/%3E%3C/svg%3E");
+    }
+
+    .spin-slow { animation: spin 22s linear infinite; }
+    .spin-rev { animation: spin 16s linear infinite reverse; }
+    .pulse-glow { animation: pulseGlow 3.2s ease-in-out infinite; }
+    .floaty { animation: floaty 5.5s ease-in-out infinite; }
+    .ticker-track { animation: ticker 28s linear infinite; }
+    .blink { animation: blink 1.4s steps(1) infinite; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.45; transform: scale(0.96); }
+      50% { opacity: 0.9; transform: scale(1.05); }
+    }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+    @keyframes blink {
+      0%, 45% { opacity: 1; }
+      50%, 100% { opacity: 0.25; }
+    }
+
+    .package {
+      position: relative;
+      background:
+        linear-gradient(#0c1c30, #0c1c30) padding-box,
+        linear-gradient(120deg, #3ad7ff, #fff6ea 40%, #ff8c1a) border-box;
+      border: 1px solid transparent;
+    }
+
+    .pins {
+      display: grid;
+      grid-auto-flow: column;
+      gap: 10px;
+      justify-content: center;
+    }
+    .pins span {
+      width: 10px;
+      height: 14px;
+      border-radius: 2px;
+      background: linear-gradient(#d7e4f2, #8ea4bc);
+      box-shadow: 0 0 0 1px rgba(7, 17, 31, 0.4);
+    }
+
+    .screw {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 35% 35%, #fff, #8ea4bc 40%, #243246 70%);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25);
+    }
+
+    .mark {
+      width: 18px;
+      height: 18px;
+      border-color: rgba(58, 215, 255, 0.7);
+    }
+
+    #toast {
+      transform: translateY(12px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    section { scroll-margin-top: 5.75rem; }
+
+    @media (max-width: 768px) {
+      .cpu-bg { background-attachment: scroll; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .spin-slow, .spin-rev, .pulse-glow, .floaty, .ticker-track, .blink {
+        animation: none;
+      }
+    }
+  </style>
+</head>
+<body class="cpu-bg min-h-screen antialiased">
+  <div class="circuit pointer-events-none fixed inset-0 -z-10"></div>
+  <div class="trace pointer-events-none fixed inset-0 -z-10 opacity-70"></div>
+
+  <div class="pointer-events-none fixed inset-4 z-40 hidden md:block">
+    <div class="mark absolute left-0 top-0 border-l-2 border-t-2"></div>
+    <div class="mark absolute right-0 top-0 border-r-2 border-t-2"></div>
+    <div class="mark absolute bottom-0 left-0 border-b-2 border-l-2"></div>
+    <div class="mark absolute bottom-0 right-0 border-b-2 border-r-2"></div>
+  </div>
+
+  <header class="sticky top-0 z-30 border-b border-laser/20 bg-ink/70 backdrop-blur-xl">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
+      <a href="#top" class="flex items-center gap-3">
+        <img src="logo.png" alt="Cat Processing Unit logo" class="h-11 w-11 rounded-full object-cover ring-2 ring-fur/80 shadow-fur" />
+        <span class="leading-tight">
+          <span class="block font-display text-sm font-bold tracking-wide text-cream sm:text-base">Cat Processing Unit</span>
+          <span class="block font-mono text-[11px] tracking-[0.28em] text-laser">$CPU</span>
+        </span>
+      </a>
+
+      <nav class="hidden items-center gap-6 text-sm font-medium text-cream/80 lg:flex">
+        <a href="#about" class="transition hover:text-laser">About</a>
+        <a href="#buy" class="transition hover:text-laser">How to Buy</a>
+        <a href="#chart" class="transition hover:text-laser">Chart</a>
+        <a href="#community" class="transition hover:text-laser">Community</a>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <a href="https://t.me/cpucat_sol" target="_blank" rel="noopener noreferrer" aria-label="Telegram" class="transition hover:scale-105">
+          <img src="tg.png" alt="" class="h-9 w-9 rounded-full object-cover ring-1 ring-white/20" />
+        </a>
+        <a href="https://x.com/cpucat_sol" target="_blank" rel="noopener noreferrer" aria-label="X" class="overflow-hidden rounded-lg ring-1 ring-white/20 transition hover:scale-105 hover:ring-laser">
+          <img src="x.png" alt="" class="h-9 w-9 object-cover" />
+        </a>
+        <a href="https://swap.pump.fun/?input=So11111111111111111111111111111111111111112&output=TBA" target="_blank" rel="noopener noreferrer" class="rounded-full bg-gradient-to-r from-amber-300 via-fur to-orange-500 px-4 py-2 font-display text-sm font-bold text-ink shadow-fur transition hover:brightness-110">
+          Buy Now
+        </a>
+      </div>
+    </div>
+    <div class="flex gap-5 overflow-x-auto border-t border-white/5 px-4 py-2 text-xs font-medium tracking-wide text-cream/70 lg:hidden">
+      <a href="#about" class="shrink-0 hover:text-laser">About</a>
+      <a href="#buy" class="shrink-0 hover:text-laser">How to Buy</a>
+      <a href="#chart" class="shrink-0 hover:text-laser">Chart</a>
+      <a href="#community" class="shrink-0 hover:text-laser">Community</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="relative mx-auto max-w-6xl px-4 pb-8 pt-12 sm:pt-16">
+      <div class="grid items-center gap-10 lg:grid-cols-[auto_1fr]">
+        <div class="floaty relative mx-auto h-52 w-52 sm:h-64 sm:w-64">
+          <div class="pulse-glow absolute inset-4 rounded-full bg-laser/40 blur-2xl"></div>
+          <div class="spin-slow absolute -inset-2 rounded-full border border-dashed border-laser/70"></div>
+          <div class="spin-rev absolute -inset-5 rounded-full border border-fur/40"></div>
+          <img src="logo.png" alt="Orange cat with a glowing cyan cyber eye" class="relative h-full w-full rounded-full object-cover ring-4 ring-ink shadow-laser" />
+          <span class="absolute -right-1 top-6 h-3 w-3 rounded-full bg-laser shadow-laser blink"></span>
+        </div>
+
+        <div class="text-center lg:text-left">
+          <p class="font-mono text-xs tracking-[0.42em] text-laser sm:text-sm">SOLANA · REV A · CORE ONLINE</p>
+          <h1 class="mt-3 font-display text-4xl font-bold leading-none text-cream sm:text-6xl lg:text-7xl">
+            Cat Processing Unit
+          </h1>
+          <p class="mt-3 bg-gradient-to-r from-fur via-amber-100 to-laser bg-clip-text font-display text-5xl font-bold text-transparent sm:text-6xl">$CPU</p>
+          <p class="mt-4 text-2xl font-semibold text-cream sm:text-3xl">Smol cat. Big processing power.</p>
+          <p class="mx-auto mt-4 max-w-xl text-base leading-relaxed text-cream/75 lg:mx-0">
+            One orange core. One cyan laser. A meme chip that fetches, decodes, and executes pure Solana chaos while everyone else is still booting.
+          </p>
+
+          <div class="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+            <a href="https://swap.pump.fun/?input=So11111111111111111111111111111111111111112&output=TBA" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-300 via-fur to-orange-500 px-6 py-3 font-display text-base font-bold text-ink shadow-fur transition hover:-translate-y-0.5 hover:brightness-110">
+              <span class="h-2.5 w-2.5 rounded-full bg-laser shadow-laser blink"></span>
+              Buy Now
+            </a>
+            <a href="https://dexscreener.com/solana/TBA" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-full border border-laser/70 bg-laser/10 px-6 py-3 font-display text-base font-bold text-laser transition hover:-translate-y-0.5 hover:bg-laser/20">
+              Chart
+            </a>
+          </div>
+
+          <div class="mx-auto mt-6 flex max-w-xl flex-col items-stretch gap-2 rounded-2xl border border-white/10 bg-ink/60 p-3 backdrop-blur-md sm:flex-row sm:items-center lg:mx-0">
+            <div class="min-w-0 flex-1 px-2 text-left">
+              <p class="font-mono text-[10px] tracking-[0.32em] text-fur">CONTRACT ADDRESS</p>
+              <p id="ca-text" class="truncate font-mono text-lg text-cream">TBA</p>
+            </div>
+            <button type="button" id="copy-ca" class="rounded-xl bg-cream px-4 py-3 font-display text-sm font-bold text-ink transition hover:bg-laser">
+              Copy CA
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <figure class="mx-auto mt-12 max-w-5xl">
+        <div class="pins mb-2" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="package overflow-hidden rounded-2xl p-2 shadow-laser sm:p-3">
+          <div class="mb-2 flex items-center justify-between px-2 font-mono text-[10px] tracking-[0.28em] text-cream/50">
+            <span>CAT PROCESSING UNIT</span>
+            <span class="text-laser">$CPU</span>
+          </div>
+          <img src="banner.png" alt="Cat Processing Unit banner with the cyber cat on a CPU" class="w-full rounded-xl object-cover" />
+        </div>
+        <div class="pins mt-2" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </figure>
+    </section>
+
+    <div class="overflow-hidden border-y border-laser/20 bg-ink/70 py-3">
+      <div class="ticker-track flex w-max gap-8 font-display text-sm tracking-[0.22em] text-cream/80">
+        <span>SMOL CAT</span><span class="text-fur">●</span>
+        <span>BIG PROCESSING POWER</span><span class="text-laser">●</span>
+        <span>$CPU</span><span class="text-fur">●</span>
+        <span>SOLANA</span><span class="text-laser">●</span>
+        <span>1 SMOL CORE</span><span class="text-fur">●</span>
+        <span>CYAN LASER EYE</span><span class="text-laser">●</span>
+        <span>SMOL CAT</span><span class="text-fur">●</span>
+        <span>BIG PROCESSING POWER</span><span class="text-laser">●</span>
+        <span>$CPU</span><span class="text-fur">●</span>
+        <span>SOLANA</span><span class="text-laser">●</span>
+        <span>1 SMOL CORE</span><span class="text-fur">●</span>
+        <span>CYAN LASER EYE</span><span class="text-laser">●</span>
+      </div>
+    </div>
+
+    <section id="about" class="mx-auto max-w-6xl px-4 py-16">
+      <div class="mb-8 flex items-end justify-between gap-4">
+        <div>
+          <p class="font-mono text-xs tracking-[0.35em] text-laser">SPEC SHEET</p>
+          <h2 class="mt-2 font-display text-3xl font-bold sm:text-4xl">Built like a chip. Acts like a cat.</h2>
+        </div>
+        <p class="hidden max-w-xs text-right text-sm text-cream/60 sm:block">Smol cat. Big processing power. That is the whole architecture.</p>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <article class="rounded-2xl border border-laser/25 bg-ink/65 p-5 backdrop-blur-md">
+          <p class="font-mono text-[11px] tracking-[0.28em] text-laser">CORES</p>
+          <p class="mt-3 font-display text-3xl text-fur">01</p>
+          <p class="mt-2 text-sm text-cream/75">One smol core. It still outruns your attention span.</p>
+        </article>
+        <article class="rounded-2xl border border-fur/30 bg-ink/65 p-5 backdrop-blur-md">
+          <p class="font-mono text-[11px] tracking-[0.28em] text-fur">CLOCK</p>
+          <p class="mt-3 font-display text-3xl text-cream">9,001</p>
+          <p class="mt-2 text-sm text-cream/75">Gigahertz of zoomies. Overclocked by sunlight.</p>
+        </article>
+        <article class="rounded-2xl border border-laser/25 bg-ink/65 p-5 backdrop-blur-md">
+          <p class="font-mono text-[11px] tracking-[0.28em] text-laser">CACHE</p>
+          <p class="mt-3 font-display text-3xl text-fur">TUNA</p>
+          <p class="mt-2 text-sm text-cream/75">L1 is treats. L2 is naps. L3 is more treats.</p>
+        </article>
+        <article class="rounded-2xl border border-fur/30 bg-ink/65 p-5 backdrop-blur-md">
+          <p class="font-mono text-[11px] tracking-[0.28em] text-fur">BUS</p>
+          <p class="mt-3 font-display text-3xl text-cream">SOL</p>
+          <p class="mt-2 text-sm text-cream/75">Solana is the motherboard. $CPU is the die.</p>
+        </article>
+      </div>
+
+      <div class="mt-6 grid items-center gap-6 rounded-3xl border border-white/10 bg-ink/55 p-6 backdrop-blur-md md:grid-cols-[180px_1fr] md:p-8">
+        <img src="logo.png" alt="" class="mx-auto h-36 w-36 rounded-2xl object-cover ring-2 ring-fur/70" />
+        <div>
+          <h3 class="font-display text-2xl font-bold">What is $CPU?</h3>
+          <p class="mt-3 leading-relaxed text-cream/80">
+            Cat Processing Unit is a Solana meme with a processor complex. The body is smol. The eye is a cyan laser. The job is simple: sit on the chip, purr at market open, and remind the timeline that big processing power can come in one very small cat. Smol cat. Big processing power.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="buy" class="mx-auto max-w-6xl px-4 py-8 pb-16">
+      <div class="mb-8 text-center">
+        <p class="font-mono text-xs tracking-[0.35em] text-fur">INSTRUCTION PIPELINE</p>
+        <h2 class="mt-2 font-display text-3xl font-bold sm:text-5xl">How to Buy</h2>
+        <p class="mx-auto mt-3 max-w-2xl text-cream/75">Four steps to load $CPU with Solana. Boot the wallet, charge it, copy the contract, execute the swap.</p>
+      </div>
+
+      <ol class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <li class="relative rounded-2xl border border-laser/30 bg-ink/70 p-5 backdrop-blur-md">
+          <div class="mb-4 flex items-center justify-between">
+            <span class="font-mono text-xs tracking-[0.3em] text-laser">01 · BOOT</span>
+            <span class="screw"></span>
+          </div>
+          <h3 class="font-display text-xl font-bold">Open a Solana wallet</h3>
+          <p class="mt-2 text-sm leading-relaxed text-cream/75">Install Phantom or Solflare and create a wallet. That wallet is the socket $CPU plugs into.</p>
+        </li>
+        <li class="relative rounded-2xl border border-fur/35 bg-ink/70 p-5 backdrop-blur-md">
+          <div class="mb-4 flex items-center justify-between">
+            <span class="font-mono text-xs tracking-[0.3em] text-fur">02 · CHARGE</span>
+            <span class="screw"></span>
+          </div>
+          <h3 class="font-display text-xl font-bold">Fund it with SOL</h3>
+          <p class="mt-2 text-sm leading-relaxed text-cream/75">Buy SOL and send it to your wallet. SOL pays for the swap and the small network fee.</p>
+        </li>
+        <li class="relative rounded-2xl border border-laser/30 bg-ink/70 p-5 backdrop-blur-md">
+          <div class="mb-4 flex items-center justify-between">
+            <span class="font-mono text-xs tracking-[0.3em] text-laser">03 · FETCH</span>
+            <span class="screw"></span>
+          </div>
+          <h3 class="font-display text-xl font-bold">Copy the CA</h3>
+          <p class="mt-2 text-sm leading-relaxed text-cream/75">Copy the contract address below and paste it into the swap so you buy the real $CPU.</p>
+          <button type="button" data-copy class="mt-4 rounded-lg border border-cream/20 px-3 py-2 font-mono text-xs text-cream transition hover:border-laser hover:text-laser">
+            Copy CA · TBA
+          </button>
+        </li>
+        <li class="relative rounded-2xl border border-fur/35 bg-ink/70 p-5 backdrop-blur-md">
+          <div class="mb-4 flex items-center justify-between">
+            <span class="font-mono text-xs tracking-[0.3em] text-fur">04 · EXECUTE</span>
+            <span class="screw"></span>
+          </div>
+          <h3 class="font-display text-xl font-bold">Swap SOL for $CPU</h3>
+          <p class="mt-2 text-sm leading-relaxed text-cream/75">Hit Buy Now, confirm the transaction in your wallet, and let the cat compile your bag.</p>
+          <a href="https://swap.pump.fun/?input=So11111111111111111111111111111111111111112&output=TBA" target="_blank" rel="noopener noreferrer" class="mt-4 inline-flex rounded-lg bg-fur px-3 py-2 font-display text-xs font-bold text-ink transition hover:brightness-110">
+            Buy Now
+          </a>
+        </li>
+      </ol>
+    </section>
+
+    <section id="chart" class="mx-auto max-w-6xl px-4 pb-16">
+      <div class="mb-5 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p class="font-mono text-xs tracking-[0.35em] text-laser">DEXSCREENER</p>
+          <h2 class="mt-2 font-display text-3xl font-bold sm:text-4xl">Live Chart</h2>
+        </div>
+        <a href="https://dexscreener.com/solana/TBA" target="_blank" rel="noopener noreferrer" class="rounded-full border border-laser/70 px-5 py-2.5 font-display text-sm font-bold text-laser transition hover:bg-laser/15">
+          Chart
+        </a>
+      </div>
+      <div class="overflow-hidden rounded-2xl border border-laser/30 bg-ink shadow-laser">
+        <div class="flex items-center gap-2 border-b border-white/10 px-4 py-3 font-mono text-[11px] tracking-[0.22em] text-cream/60">
+          <span class="h-2.5 w-2.5 rounded-full bg-fur"></span>
+          <span class="h-2.5 w-2.5 rounded-full bg-amber-200"></span>
+          <span class="h-2.5 w-2.5 rounded-full bg-laser"></span>
+          <span class="ml-2">DEXSCREENER // $CPU</span>
+        </div>
+        <iframe
+          title="Dexscreener chart for Cat Processing Unit"
+          src="https://dexscreener.com/solana/TBA?embed=1&loadChartSettings=0&trades=0&info=0&chartLeftToolbar=0&chartTheme=dark&theme=dark&chartStyle=1"
+          class="h-[460px] w-full bg-[#0b1220] sm:h-[560px]"
+          loading="lazy"
+        ></iframe>
+      </div>
+    </section>
+
+    <section id="community" class="mx-auto max-w-6xl px-4 pb-24">
+      <div class="rounded-3xl border border-white/10 bg-ink/60 p-6 text-center backdrop-blur-md sm:p-10">
+        <p class="font-mono text-xs tracking-[0.35em] text-fur">I/O PORTS</p>
+        <h2 class="mt-2 font-display text-3xl font-bold sm:text-4xl">Plug into the cat</h2>
+        <p class="mx-auto mt-3 max-w-lg text-cream/75">Smol cat. Big processing power. The signal is louder when the whole litter is online.</p>
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <a href="https://t.me/cpucat_sol" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-5 py-3 transition hover:border-laser/60">
+            <img src="tg.png" alt="" class="h-12 w-12 rounded-full object-cover" />
+            <span class="text-left">
+              <span class="block font-display font-bold">Telegram</span>
+              <span class="block font-mono text-xs text-laser">t.me/cpucat_sol</span>
+            </span>
+          </a>
+          <a href="https://x.com/cpucat_sol" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-5 py-3 transition hover:border-fur/60">
+            <img src="x.png" alt="" class="h-12 w-12 rounded-lg object-cover" />
+            <span class="text-left">
+              <span class="block font-display font-bold">X</span>
+              <span class="block font-mono text-xs text-fur">x.com/cpucat_sol</span>
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/10 bg-ink/80 px-4 py-8 text-center">
+    <div class="mx-auto flex max-w-6xl flex-col items-center gap-3">
+      <img src="logo.png" alt="" class="h-12 w-12 rounded-full object-cover ring-2 ring-fur/70" />
+      <p class="font-display text-lg font-bold">Cat Processing Unit <span class="text-laser">$CPU</span></p>
+      <p class="text-sm text-cream/70">Smol cat. Big processing power.</p>
+      <p class="max-w-md text-xs text-cream/45">$CPU is a meme token on Solana. This site is not financial advice.</p>
+    </div>
+  </footer>
+
+  <div class="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/15 bg-ink/85 px-3 py-2 shadow-laser backdrop-blur-xl sm:hidden">
+    <button type="button" data-copy class="rounded-full px-3 py-2 font-mono text-xs text-cream">Copy CA</button>
+    <a href="https://swap.pump.fun/?input=So11111111111111111111111111111111111111112&output=TBA" target="_blank" rel="noopener noreferrer" class="rounded-full bg-fur px-4 py-2 font-display text-xs font-bold text-ink">Buy Now</a>
+  </div>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-laser px-4 py-2 font-display text-sm font-bold text-ink shadow-laser" role="status" aria-live="polite">
+    CA copied
+  </div>
+
+  <script>
+    const CA = "TBA";
+
+    async function copyCA(trigger) {
+      try {
+        await navigator.clipboard.writeText(CA);
+      } catch (err) {
+        const area = document.createElement("textarea");
+        area.value = CA;
+        area.setAttribute("readonly", "");
+        area.style.position = "fixed";
+        area.style.left = "-9999px";
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand("copy");
+        document.body.removeChild(area);
+      }
+
+      const toast = document.getElementById("toast");
+      toast.classList.add("show");
+      if (trigger) {
+        const original = trigger.dataset.label || trigger.textContent;
+        trigger.dataset.label = original;
+        trigger.textContent = "Copied";
+        window.setTimeout(() => {
+          trigger.textContent = original;
+        }, 1400);
+      }
+      window.setTimeout(() => toast.classList.remove("show"), 1400);
+    }
+
+    document.getElementById("copy-ca").addEventListener("click", (event) => copyCA(event.currentTarget));
+    document.querySelectorAll("[data-copy]").forEach((button) => {
+      button.addEventListener("click", (event) => copyCA(event.currentTarget));
+    });
+  </script>
+</body>
+</html>
